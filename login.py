@@ -32,12 +32,5 @@ def login():
     )
 
 
-    if not user.game:
-         member_id = user.id
-         board = json.dumps(create_board())
-         print(board)
-         game = Game(member_id=member_id, board=board)
-         db.session.add(game)
-         db.session.commit()
-
+   
     return jsonify({'user': {'user_name': user.user_name, 'email': user.email}, 'token': access_token})
