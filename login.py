@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from models import Member
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import create_access_token
-# import the game board (for board printing purposes when the user has successfully logged in)
+
 
 bcrypt = Bcrypt()
 
@@ -31,13 +31,13 @@ def login():
         identity = {"member_id": user.id, "user_name":user.user_name}
     )
 
-    # Game initialization (to create a game for the user if one doesn't exist yet)
-    # if not user.game:
-        # member_id = user.id
-        # board = json.dumps(create_board())
-        # print(board)
-        # game = Game(member_id=member_id, board=board)
-        # db.session.add(game)
-        # db.session.commit()
+
+    if not user.game:
+         member_id = user.id
+         board = json.dumps(create_board())
+         print(board)
+         game = Game(member_id=member_id, board=board)
+         db.session.add(game)
+         db.session.commit()
 
     return jsonify({'user': {'user_name': user.user_name, 'email': user.email}, 'token': access_token})
