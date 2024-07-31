@@ -3,16 +3,23 @@ from models import db, Member, Game
 from config import Config
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager, create_access_token,jwt_required, get_jwt_identity
+
+
 bcrypt = Bcrypt()
+jwt = JWTManager()
+
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     db.init_app(app)
+    bcrypt.init_app(app)
+    jwt.init_app(app)
     return app
 
 app = create_app()
-
 migrate = Migrate(app, db)
+
 
 with app.app_context():
     db.create_all()
@@ -48,6 +55,34 @@ def signup():
     db.session.add(member)
     db.session.commit()
     return jsonify({"message": "Account created successfully"}), 201
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    user = Member.query.filter_by(email=email).first()
+    # Validation
+    if not email or not password:
+        return jsonify({'message': "Required field missing"}), 400
+    if not user:
+        return jsonify({'message': "User not found"}), 400
+
+    pass_ok = bcrypt.check_password_hash(user.password.encode('utf-8'),password)
+
+    if not pass_ok:
+        return jsonify({'message': "Invalid password"}), 401    
+    # ACCESS TOKEN
+    access_token = create_access_token(
+        identity = {"id": user.id, "user_name":user.user_name}
+    )
+    
+
+    return jsonify({'message':"success"},  {'token': access_token}),200
+
+    
+
+    
 
 
 if __name__ == '__main__':
