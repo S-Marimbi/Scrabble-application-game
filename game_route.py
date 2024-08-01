@@ -20,10 +20,10 @@ def get_board():
     return jsonify({'message': f"Hi, {current_user['user_name']} this is your board", 'board':board})
 
 
-@game_blueprint.route("/game/rack", methods=["PUT"])
-@jwt_required()
-def get_rack():
-    current_user = get_jwt_identity()
+#@game_blueprint.route("/game/rack", methods=["PUT"])
+#@jwt_required()
+#def get_rack():
+   # current_user = get_jwt_identity()
     print(current_user)
     game = Game.query.filter_by(member_id=current_user['member_id']).first()
     if not game:
