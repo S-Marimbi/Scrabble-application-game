@@ -91,7 +91,13 @@ def login():
         member_id = user.id
         board = json.dumps(create_board())
         print(board)
-        game = Game(member_id=member_id, board=board)
+        game = Game(        
+            member_id=member_id, 
+            board=board,
+            player_rack=json.dumps([]),
+            computer_rack=json.dumps([])
+        )    
+
         db.session.add(game)
         db.session.commit()
 
