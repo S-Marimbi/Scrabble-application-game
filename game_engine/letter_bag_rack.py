@@ -26,3 +26,4 @@ computer_rack = [letter_bag.pop() for _ in range(7)]
 def draw_tiles(rack):
     while len(rack) < 7 and letter_bag:
         rack.append(letter_bag.pop())
+        #attempt
