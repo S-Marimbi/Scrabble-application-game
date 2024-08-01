@@ -62,7 +62,7 @@ def login():
     email = data.get('email')
     password = data.get('password')
     user = Member.query.filter_by(email=email).first()
-    # Validation
+
     if not email or not password:
         return jsonify({'message': "Required field missing"}), 400
     if not user:
@@ -72,7 +72,7 @@ def login():
 
     if not pass_ok:
         return jsonify({'message': "Invalid password"}), 401    
-    # ACCESS TOKEN
+   
     access_token = create_access_token(
         identity = {"id": user.id, "user_name":user.user_name}
     )
