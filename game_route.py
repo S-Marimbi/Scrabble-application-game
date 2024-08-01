@@ -2,8 +2,7 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required,get_jwt_identity
 from models import db, Game
 import json
-from util import to_int
-import random
+from game_engine import create_board
 
 game_blueprint = Blueprint('game', __name__)
 
