@@ -101,7 +101,7 @@ def login():
         db.session.add(game)
         db.session.commit()
 
-    return jsonify({'message':"success"},  {'token': access_token}),200
+    return jsonify({'message':"success", 'token': access_token}),200
 
     
 
