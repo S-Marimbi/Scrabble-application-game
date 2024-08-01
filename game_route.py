@@ -18,10 +18,10 @@ def get_board_and_rack():
     if not game:
         return jsonify({'message': 'Game does not exist'}), 404
     
-    # Retrieve the board
+   
     board = json.loads(game.board)
     
-    # If the request method is GET, just return the board and racks if they exist
+    
     if request.method == "GET":
         player_rack = json.loads(game.player_rack) if game.player_rack else []
         computer_rack = json.loads(game.computer_rack) if game.computer_rack else []
@@ -32,7 +32,7 @@ def get_board_and_rack():
             'computer_rack': computer_rack
         })
 
-    # If the request method is PUT, generate and return the racks
+   
     elif request.method == "PUT":
         letter_no = {
             'A': 9, 'B': 2, 'C': 2, 'D': 4, 'E': 12,
@@ -42,19 +42,19 @@ def get_board_and_rack():
             'U': 4, 'V': 2, 'W': 2, 'X': 1, 'Y': 2, 'Z': 1
         }
         
-        # Create the letter bag
+       
         letter_bag = []
         for letter, count in letter_no.items():
             letter_bag.extend([letter] * count)
         random.shuffle(letter_bag)
         
-        # Generate the player's rack
+      
         player_rack = [letter_bag.pop() for _ in range(7)]
         
-        # Generate the computer's rack
+       
         computer_rack = [letter_bag.pop() for _ in range(7)]
         
-        # Save the racks to the game object
+     
         game.player_rack = json.dumps(player_rack)
         game.computer_rack = json.dumps(computer_rack)
         db.session.commit()
