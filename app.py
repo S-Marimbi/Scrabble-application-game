@@ -4,6 +4,8 @@ from config import Config
 from flask_migrate import Migrate
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token,jwt_required, get_jwt_identity
+from game_engine import create_board
+import json
 
 
 bcrypt = Bcrypt()
@@ -15,7 +17,15 @@ def create_app():
     db.init_app(app)
     bcrypt.init_app(app)
     jwt.init_app(app)
+
+    from game_route import game_blueprint
+    app.register_blueprint(game_blueprint)
+
     return app
+
+    
+
+
 
 app = create_app()
 migrate = Migrate(app, db)
@@ -62,7 +72,7 @@ def login():
     email = data.get('email')
     password = data.get('password')
     user = Member.query.filter_by(email=email).first()
-    # Validation
+
     if not email or not password:
         return jsonify({'message': "Required field missing"}), 400
     if not user:
@@ -72,13 +82,26 @@ def login():
 
     if not pass_ok:
         return jsonify({'message': "Invalid password"}), 401    
-    # ACCESS TOKEN
+   
     access_token = create_access_token(
         identity = {"id": user.id, "user_name":user.user_name}
     )
     
+    if not user.game:
+        member_id = user.id
+        board = json.dumps(create_board())
+        print(board)
+        game = Game(        
+            member_id=member_id, 
+            board=board,
+            player_rack=json.dumps([]),
+            computer_rack=json.dumps([])
+        )    
 
-    return jsonify({'message':"success"},  {'token': access_token}),200
+        db.session.add(game)
+        db.session.commit()
+
+    return jsonify({'message':"success", 'token': access_token}),200
 
     
 
