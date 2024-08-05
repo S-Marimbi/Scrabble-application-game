@@ -140,7 +140,7 @@ def computer_move():
     user_id = current_user
     data = request.get_json()
 
-    game = Game.query.filter_by(member_id=user_id).first()
+    game = Game.query.filter_by(member_id=current_user['id']).first()
     if not game:
         return jsonify({'message': 'Game does not exist'}), 404
 
