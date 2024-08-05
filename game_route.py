@@ -275,7 +275,8 @@ def computer_move():
 
         word = random.choice(valid_words)
         attempts = 0
-
+        valid_placement = False
+        
         while attempts < 100:
             row, col, direction = random.randint(0, 14), random.randint(0, 14), random.choice(['H', 'V'])
             
