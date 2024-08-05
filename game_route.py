@@ -279,7 +279,7 @@ def computer_move():
             row, col, direction = random.randint(0, 14), random.randint(0, 14), random.choice(['H', 'V'])
             attempts += 1
 
-            # Check if the word fits within the board dimensions
+            
             if (direction == 'H' and col + len(word) <= 15) or (direction == 'V' and row + len(word) <= 15):
                 for i, letter in enumerate(word):
                     if direction == 'H':
