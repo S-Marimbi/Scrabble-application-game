@@ -259,7 +259,6 @@ def swap_rack():
 @jwt_required()
 def computer_move():
     current_user = get_jwt_identity()
- 
 
     game = Game.query.filter_by(member_id=current_user['id']).first()
     if not game:
@@ -275,33 +274,32 @@ def computer_move():
 
         word = random.choice(valid_words)
         attempts = 0
-        
-        
+
         while attempts < 1000000:
             row, col, direction = random.randint(0, 14), random.randint(0, 14), random.choice(['H', 'V'])
-    
             attempts += 1
 
-        
-            for i, letter in enumerate(word):
-                if direction == 'H':
-                    current_board[row][col + i] = letter
-                    computer_rack.remove(letter)
-                else:
-                    current_board[row + i][col] = letter
-                    computer_rack.remove(letter)
+            # Check if the word fits within the board dimensions
+            if (direction == 'H' and col + len(word) <= 15) or (direction == 'V' and row + len(word) <= 15):
+                for i, letter in enumerate(word):
+                    if direction == 'H':
+                        current_board[row][col + i] = letter
+                    else:
+                        current_board[row + i][col] = letter
+                    rack.remove(letter)
 
-            game.board = json.dumps(current_board)
-            game.computer_rack = json.dumps(computer_rack)
-            db.session.commit()
+                
+                game.board = json.dumps(current_board)
+                game.computer_rack = json.dumps(rack)
+                db.session.commit()
 
-            
-            return jsonify(
-                {
-                    'message': "Computer played",
-                   
-                }
-            ), 200
-  
+                return jsonify(
+                    {
+                        'message': "Computer played",
+                        'word': word, 
+                    }
+                ), 200
+
+        return jsonify({'message': 'Failed to place word on board.'}), 400
 
     return play_word(computer_rack, current_board)
