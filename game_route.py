@@ -275,23 +275,14 @@ def computer_move():
 
         word = random.choice(valid_words)
         attempts = 0
-        valid_placement = False
+        
         
         while attempts < 1000000:
             row, col, direction = random.randint(0, 14), random.randint(0, 14), random.choice(['H', 'V'])
-            
-            if direction == 'H' and col + len(word) <= 15:
-                if all(current_board[row][col + i] in [" ", word[i]] for i in range(len(word))):
-                    valid_placement = True
-                    break
-            elif direction == 'V' and row + len(word) <= 15:
-                if all(current_board[row + i][col] in [" ", word[i]] for i in range(len(word))):
-                    valid_placement = True
-                    break
-
+    
             attempts += 1
 
-        if valid_placement:
+        
             for i, letter in enumerate(word):
                 if direction == 'H':
                     current_board[row][col + i] = letter
@@ -311,7 +302,6 @@ def computer_move():
                    
                 }
             ), 200
-        else:
-            return jsonify({'message': 'Computer could not place any valid word.'}), 400
+  
 
     return play_word(computer_rack, current_board)
