@@ -298,7 +298,7 @@ def computer_move():
             
             return jsonify(
                 {
-                    'message': "Computer played",
+                    'message': f"Computer played: {word}, row,col: {row},{col}, direction: {direction}",
                    
                 }
             ), 200
