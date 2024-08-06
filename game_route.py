@@ -101,4 +101,7 @@ def generate_rack():
         'computer_rack': computer_rack
     })
 
-
+@game_blueprint.route("/game/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    return jsonify({"message": "Successfully logged out"}), 200
