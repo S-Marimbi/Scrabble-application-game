@@ -101,4 +101,41 @@ def generate_rack():
         'computer_rack': computer_rack
     })
 
+@game_blueprint.route('/game/newgame', methods=["POST"])
+@jwt_required()
+def new_game():
+    current_user = get_jwt_identity()
+    game = Game.query.filter_by(member_id=current_user['id']).first()
 
+    if game:
+        new_board = json.dumps(create_board())
+        letter_no = {
+            'A': 9, 'B': 2, 'C': 2, 'D': 4, 'E': 12,
+            'F': 2, 'G': 3, 'H': 2, 'I': 9, 'J': 1,
+            'K': 1, 'L': 4, 'M': 2, 'N': 6, 'O': 8,
+            'P': 2, 'Q': 1, 'R': 6, 'S': 4, 'T': 6,
+            'U': 4, 'V': 2, 'W': 2, 'X': 1, 'Y': 2, 'Z': 1
+        }
+
+        letter_bag = []
+        for letter, count in letter_no.items():
+            letter_bag.extend([letter] * count)
+        random.shuffle(letter_bag)
+
+        player_rack = [letter_bag.pop() for _ in range(7)]
+        computer_rack = [letter_bag.pop() for _ in range(7)]
+
+        game.board = new_board
+        game.player_rack = json.dumps(player_rack)
+        game.computer_rack = json.dumps(computer_rack)
+
+        db.session.commit()
+
+        return jsonify({
+            'message': f"Hi, {current_user['user_name']} this is your new board and racks",
+            "board": json.loads(new_board),
+            "player_rack": player_rack,
+            "computer_rack": computer_rack
+        }), 200
+    else:
+        return jsonify({'message': 'No existing game found.'}), 404
