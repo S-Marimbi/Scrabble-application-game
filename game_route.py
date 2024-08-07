@@ -8,6 +8,37 @@ from collections import Counter
 
 game_blueprint = Blueprint('game', __name__)
 
+
+def load_dictionary(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            words = file.read().splitlines()
+        return [word.upper() for word in words]
+    except FileNotFoundError:
+        print(f"Error: The file at {file_path} was not found.")
+        return []
+
+
+dictionary_file_path = r'game_engine/dictionary.txt'
+dictionary = load_dictionary(dictionary_file_path)
+
+
+letter_points = {
+    'A': 1, 'B': 3, 'C': 3, 'D': 2, 'E': 1,
+    'F': 4, 'G': 2, 'H': 4, 'I': 1, 'J': 8,
+    'K': 5, 'L': 1, 'M': 3, 'N': 1, 'O': 1,
+    'P': 3, 'Q': 10, 'R': 1, 'S': 1, 'T': 1,
+    'U': 1, 'V': 4, 'W': 4, 'X': 8, 'Y': 4, 'Z': 10
+}
+
+def can_form_word(word, rack):
+    rack_counter = Counter(rack)
+    word_counter = Counter(word)
+    for letter, count in word_counter.items():
+        if rack_counter[letter] < count:
+            return False
+    return True
+
 @game_blueprint.route('/game/board', methods=["GET"])
 @jwt_required()
 def get_board():
