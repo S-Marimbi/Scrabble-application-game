@@ -220,3 +220,54 @@ def swap_rack():
         'message': f"{current_user['user_name']}, here is your new rack",
         'player_rack': player_rack
     })
+
+
+@game_blueprint.route("/game/computer-move", methods=["POST"])
+@jwt_required()
+def computer_move():
+    current_user = get_jwt_identity()
+
+    game = Game.query.filter_by(member_id=current_user['id']).first()
+    if not game:
+        return jsonify({'message': 'Game does not exist'}), 404
+
+    current_board = json.loads(game.board)
+    computer_rack = json.loads(game.computer_rack)
+
+    def play_word(rack, board, is_computer=True):
+        valid_words = [word for word in dictionary if can_form_word(word, rack)]
+        if not valid_words:
+            return jsonify({'message': 'Computer has no valid words.'}), 400
+
+        word = random.choice(valid_words)
+        attempts = 0
+
+        while attempts < 1000000:
+            row, col, direction = random.randint(0, 14), random.randint(0, 14), random.choice(['H', 'V'])
+            attempts += 1
+
+            
+            if (direction == 'H' and col + len(word) <= 15) or (direction == 'V' and row + len(word) <= 15):
+                for i, letter in enumerate(word):
+                    if direction == 'H':
+                        current_board[row][col + i] = letter
+                    else:
+                        current_board[row + i][col] = letter
+                    rack.remove(letter)
+
+                
+                game.board = json.dumps(current_board)
+                game.computer_rack = json.dumps(rack)
+                db.session.commit()
+
+        return jsonify(
+                    {
+                        'message': "Computer played",
+                        'word': word, 
+                    }
+                ), 200
+
+        return jsonify({'message': 'Failed to place word on board.'}), 400
+
+    return play_word(computer_rack, current_board)
+
