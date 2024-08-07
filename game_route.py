@@ -291,7 +291,7 @@ def computer_move():
                 game.computer_rack = json.dumps(rack)
                 db.session.commit()
 
-        return jsonify(
+            return jsonify(
                     {
                         'message': "Computer played",
                         'word': word, 
