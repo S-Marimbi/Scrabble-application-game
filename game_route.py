@@ -302,6 +302,13 @@ def computer_move():
 
     return play_word(computer_rack, current_board)
 
+   
+@game_blueprint.route('/game/newgame', methods=["POST"])
+@jwt_required()
+def new_game():
+    current_user = get_jwt_identity()
+    game = Game.query.filter_by(member_id=current_user['id']).first()
+
     if game:
         new_board = json.dumps(create_board())
         letter_no = {
@@ -334,3 +341,8 @@ def computer_move():
         }), 200
     else:
         return jsonify({'message': 'No existing game found.'}), 404
+
+@game_blueprint.route("/game/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    return jsonify({"message": "Successfully logged out"}), 200
