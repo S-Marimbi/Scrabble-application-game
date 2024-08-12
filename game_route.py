@@ -356,4 +356,6 @@ def new_game():
 @game_blueprint.route("/game/logout", methods=["POST"])
 @jwt_required()
 def logout():
-    return jsonify({"message": "Successfully logged out"}), 200
+    current_user = get_jwt_identity() 
+    username = current_user.get('user_name') 
+    return jsonify({"message": f"{username} you have successfully logged out"}), 200
