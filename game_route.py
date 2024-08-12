@@ -92,7 +92,7 @@ def get_board():
 
 
 
-@game_blueprint.route('/game/rack', methods=["PUT"])
+@game_blueprint.route('/game/rack', methods=["GET"])
 @jwt_required()
 def generate_rack():
     current_user = get_jwt_identity()
