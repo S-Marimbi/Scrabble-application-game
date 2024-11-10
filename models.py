@@ -22,3 +22,4 @@ class Game(db.Model):
     player_rack = db.Column(db.Text, nullable=False)
     computer_rack = db.Column(db.Text, nullable=False)
     member_id = db.Column(db.Integer, db.ForeignKey('member.id', ondelete = 'CASCADE'), nullable=False, unique = True)
+#  yeah pop 
